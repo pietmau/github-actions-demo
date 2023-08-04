@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "github-actions-demo"
 include(":app")
+include(":library")
