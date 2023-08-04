@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
@@ -20,10 +21,17 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+    flavorDimensions.add("color")
 
     productFlavors {
-        create("flavourA"){}
-        create("flavourB"){}
+        create("flavourA") {
+            namespace = "com.pietrantuono.libraryA"
+            dimension = "color"
+        }
+        create("flavourB") {
+            namespace = "com.pietrantuono.libraryB"
+            dimension = "color"
+        }
     }
 
 
@@ -33,6 +41,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 }
 
@@ -45,3 +59,19 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.my-company"
+            artifactId = "my-library"
+            version = "1.0"
+
+            afterEvaluate {
+                from(components["flavourARelease"])
+            }
+        }
+    }
+}
+
+
