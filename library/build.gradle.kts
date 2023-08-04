@@ -44,8 +44,9 @@ android {
     }
 
     publishing {
-        singleVariant("release") {
-            withSourcesJar()
+        multipleVariants {
+            allVariants()
+            withJavadocJar()
         }
     }
 }
@@ -62,13 +63,32 @@ dependencies {
 
 publishing {
     publications {
-        register<MavenPublication>("release") {
-            groupId = "com.my-company"
-            artifactId = "my-library"
+        register<MavenPublication>("flavourA") {
+            groupId = "com.pietrantuono.library"
+            artifactId = "my-library.flavourA"
             version = "1.0"
 
             afterEvaluate {
                 from(components["flavourARelease"])
+            }
+        }
+
+        register<MavenPublication>("flavourB") {
+            groupId = "com.pietrantuono.library"
+            artifactId = "my-library.flavourB"
+            version = "1.1"
+
+            afterEvaluate {
+                from(components["flavourBRelease"])
+            }
+        }
+        repositories {
+            maven {
+                url = uri("https://nexus.my-company.com/repository/maven-releases/")
+                credentials {
+                    username = "NEXUS_USER_NAME"
+                    password = "NEXUS_USER_PASSWORD"
+                }
             }
         }
     }
